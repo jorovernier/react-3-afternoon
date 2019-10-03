@@ -1,4 +1,6 @@
 import React, { Component } from 'react';
+import axios from 'axios';
+import Post from './Post/Post';
 
 import './App.css';
 
@@ -19,19 +21,35 @@ class App extends Component {
   }
   
   componentDidMount() {
-
+    axios.get('https://practiceapi.devmountain.com/api/posts').then(response => {
+      this.setState({
+        posts: response.data
+      })
+    })
   }
 
-  updatePost() {
-  
+  updatePost(id, text) {
+    axios.put(`https://practiceapi.devmountain.com/api/posts?id=${id}`, {text}).then(response => {
+      this.setState({
+        posts: response.data
+      })
+    })
   }
 
-  deletePost() {
-
+  deletePost(id) {
+    axios.delete(`https://practiceapi.devmountain.com/api/posts?id=${id}`).then(response => {
+      this.setState({
+        posts: response.data
+      })
+    })
   }
 
-  createPost() {
-
+  createPost(text) {
+    axios.post('https://practiceapi.devmountain.com/api/posts', {text}).then(response => {
+      this.setState({
+        posts: response.data
+      })
+    })
   }
 
   render() {
@@ -43,7 +61,20 @@ class App extends Component {
 
         <section className="App__content">
 
-          <Compose />
+          <Compose createPostFn={this.createPost}/>
+
+          {
+            posts.map(post => (
+              <Post 
+                key={post.id}
+                text={post.text}
+                date={post.date}
+                id={post.id}
+                updatePostFn={this.updatePost}
+                deletePostFn={this.deletePost}
+              />
+            ))
+          }
           
         </section>
       </div>
@@ -52,3 +83,5 @@ class App extends Component {
 }
 
 export default App;
+
+// https://www.youtube.com/watch?v=dQw4w9WgXcQ
